@@ -184,8 +184,8 @@ function doExec($passedin) {
 		// Find the totals in each group
 		$final_group_options = array();
 		
-		foreach($group_options as $group) {
-			$final_group_options[$group] = array_sum($data[$group]);
+		foreach($group_options as $a_group) {
+			$final_group_options[$a_group] = array_sum($data[$a_group]);
 		}
 		
 		// So

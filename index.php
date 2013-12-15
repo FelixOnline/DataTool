@@ -35,9 +35,9 @@
 <body>
     <div class="container">
         <div class="navbar navbar-fixed-top navbar-inverse">
-            <div class="navbar-inner">
+            <div class="navbar-header">
                 <div class="container">
-                    <a class="brand" href="index.php">Felix Surveys Data Tool</a>
+                    <a class="navbar-brand" href="index.php">Felix Surveys Data Tool</a>
                 </div>
             </div>
         </div>
@@ -45,13 +45,16 @@
 	    </div>
         <header id="head">
             <h1><?php echo $felix_survey_name; ?></h1>
+            <div class="alert alert-info">
+		Please remember to close your browser after using this tool, as this is necessary to log out.
+            </div>
         </header>
         <div class="well">
             <form class="form-inline" action="index.php" method="post" style="margin-bottom: 0;">
-	            <div class="row-fluid">
-		            <div class="span3">
-		                Find (select multiple using ctrl/cmd)<br>
-		                <select name="interested[]" multiple style="width: 100%; margin-top: 5px; margin-bottom: 5px; height: 100px">
+	            <div class="row" style="margin-left: -10px !important;">
+		            <div class="col-md-4">
+				<label for="interested">Find (select multiple using ctrl/cmd)</label><br>
+		                <select id="interested" name="interested[]" multiple style="width: 100%; margin-top: 5px; margin-bottom: 5px; height: 150px" class="form-control">
 		                    <?php foreach(getColNames() as $col): ?>
 		                    <option <?php if(array_key_exists('interested', $_POST) && array_search($col, $_POST['interested']) !== FALSE): echo 'selected '; endif;?>value="<?php echo $col; ?>">
 		                        <?php echo $col; ?>
@@ -59,9 +62,9 @@
 		                    <?php endforeach; ?>
 		                </select>
 		             </div>
-		             <div class="span9">
-                		grouped by
-		                <select name="filter">
+		             <div class="col-md-8">
+                		<label for="filter">grouped by</label>
+		                <select name="filter" class="form-control" id="filter">
 		                    <option <?php if(array_key_exists('interested', $_POST) && $_POST['interested'] == 'nofilter'): echo 'selected '; endif; ?>value="nofilter">
 		                        No grouping (all responses)
 		                    </option>
@@ -71,18 +74,20 @@
 		                    </option>
 		                    <?php endforeach; ?>
 		                </select>&nbsp;
+				<div class="btn-group pull-right">
 		                <input type="submit" class="btn btn-primary" value="Search">
-		                <input type="reset" class="btn" value="Clear">
-		                <br><br>
-		                Where
-		                <select name="restriction">
+		                <input type="reset" class="btn btn-default" value="Clear">
+		                </div>
+				<br><br>
+		                <label for="restriction">Where</label>
+		                <select name="restriction" id="restriction" class="form-control">
 		                    <?php foreach(getColNames() as $col): ?>
 		                    <option <?php if(array_key_exists('restriction', $_POST) && $_POST['restriction'] == $col): echo 'selected '; endif; ?> value="<?php echo $col; ?>">
 		                        <?php echo $col; ?>
 		                    </option>
 		                    <?php endforeach; ?>
 		                </select>&nbsp;
-		                <select name="restriction_type">
+		                <select name="restriction_type" class="form-control">
 		                    <?php
 		                    	$types = array('ignore' => 'Ignore this criterion', 'eq' => '=', 'neq' => '!=', 'lt' => '&lt;', 'gt' => '&gt;', 'lte' => '&lt;=', 'gte' => '&gt;=', 'like' => 'Contains');
 		                    ?>
@@ -92,19 +97,20 @@
 			                </option>
 			                <?php endforeach; ?>
 		                </select>&nbsp;
-		                <input type="text" <?php if(array_key_exists('filter', $_POST)): echo 'value="'.$_POST['restriction_comparative'].'" '; endif; ?>name="restriction_comparative">
+		                <input type="text" class="form-control" <?php if(array_key_exists('filter', $_POST)): echo 'value="'.$_POST['restriction_comparative'].'" '; endif; ?> name="restriction_comparative" style="width: 
+auto !important">
 		                <br><br>
-		                <label class="checkbox">
+		                <label class="checkbox-inline">
 		                    <input type="checkbox" <?php if(array_key_exists('ignorena', $_POST) && $_POST['ignorena'] == 1): ?>checked <?php endif; ?>value="1" id="ignorena" name="ignorena">
 		                    &nbsp;Ignore N/A responses
 		                </label>&nbsp;&nbsp;&nbsp;
-		                <label class="checkbox">
+		                <label class="checkbox-inline">
 		                    <input type="checkbox" <?php if(array_key_exists('ignoredws', $_POST) && $_POST['ignoredws'] == 1): ?>checked <?php endif; ?>value="1" id="ignoredws" name="ignoredws">
 		                    &nbsp;Ignore 'Don't wish to say'
 		                </label>
-		                <a href="#" onclick="return open_recent();" class="btn pull-right">Choose a previous query</a>
+		                <a href="#" onclick="return open_recent();" class="btn btn-info pull-right">Choose a previous query</a>
 		             </div>
-		         </div>
+		</div>
             </form>
         </div>
         <?php
@@ -134,7 +140,7 @@
 							}
                             echo '<input type="hidden" name="dontlog" value="1">';
                             ?>
-                            <input type="submit" value="Export as CSV" class="btn">
+                            <input type="submit" value="Export as CSV" class="btn btn-default">
                         </form>
 						<?php if(count($_POST['interested']) == 1): ?>
 						<?php $rt = sha1(time().rand()); ?>
@@ -151,7 +157,7 @@
 							}
                             echo '<input type="hidden" name="dontlog" value="1">';
                             ?>
-                            <input type="submit" value="Generate bar chart" class="btn">
+                            <input type="submit" value="Generate bar chart" class="btn btn-default">
                         </form>
                     	<?php endif; ?>
                     <?php
@@ -180,7 +186,7 @@
 	                            ?>
 	                            <input type="hidden" name="dontlog" value="1">
 	                            <input type="hidden" name="requested_group" value="<?php echo $group_option; ?>">
-	                            <input type="submit" value="Generate pie chart" class="btn">
+	                            <input type="submit" value="Generate pie chart" class="btn btn-default">
 	                        </form>
 	                    	<?php endif; ?>
 	                        <?php
@@ -219,7 +225,7 @@
                 }
             } else {
         ?>
-        <div class="hero-unit">
+        <div class="jumbotron">
             <h1>Hi, there!</h1>
             <p>What would you like to find out? Run a query to display some statistics.</p>
         </div>
@@ -227,7 +233,7 @@
             }
         ?>
         <footer style="border-top: 1px solid #e5e5e5; color: #777; padding: 30px 0; margin-top: 70px;">
-			<p>&copy; Felix Imperial <a href="#head">Top of page</a> - <a href="#" onClick="return open_changelog();">Version 1.3.1</a></p>
+			<p>&copy; Felix Imperial <a href="#head">Top of page</a> - <a href="#" onClick="return open_changelog();">Version 1.4</a></p>
         </footer>
     </div>
 </body>

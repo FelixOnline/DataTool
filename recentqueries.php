@@ -19,18 +19,20 @@
 <body>
     <div class="container-fluid">
         <div class="navbar navbar-fixed-top navbar-inverse">
-            <div class="navbar-inner">
+            <div class="navbar-header">
                 <div class="container">
-                    <a class="brand" href="#">Query history for <?php echo $felix_survey_name; ?></a>
+                    <a class="navbar-brand" href="#">Query history for <?php echo $felix_survey_name; ?></a>
                 </div>
             </div>
         </div>
+<div class="visible-desktop" style="padding-top: 60px;">
+        </div>
 		<div class="container">
 	        <div class="btn-group">
-		        <a href="#" class="btn" onclick="window.close(); return;">Close</a>
-		        <a href="#" class="btn" onclick="document.location.reload(); return;">Update query list</a>
+		        <a href="#" class="btn btn-default" onclick="window.close(); return;">Close</a>
+		        <a href="#" class="btn btn-default" onclick="document.location.reload(); return;">Update query list</a>
 		    </div>
-		    <br>
+		    <br><br>
 	        <?php
 	        	$sql = 'SELECT * FROM `'.$db_table.'_history` WHERE `date` >= 1361996400 ORDER BY `date` DESC';
 	        	
@@ -41,9 +43,9 @@
 				}
 				
 				while($row = mysql_fetch_object($res)) {
-					echo '<b class="muted">'.strtoupper(date('l jS F Y H:i', $row->date)).'</b>';
 					$form = unserialize($row->query);
 					echo '<form action="index.php" method="POST" target="dt_form_'.sha1($felix_survey_name).'">';
+					echo '<b class="text-muted">'.strtoupper(date('l jS F Y H:i', $row->date)).'</b>';
 					foreach($form as $key => $value) {
 						if(is_array($value)) {
 							foreach($value as $value2) {
@@ -55,8 +57,8 @@
 					}
 					echo '<input type="hidden" name="dontlog" value="1">';
 					echo '<input type="submit" value="Rerun query" class="btn btn-primary pull-right">';
-					echo '<p style="font-weight: bold; margin-bottom: 0; padding-bottom: 0;" class="lead">'.$row->title.'</p>';
-					echo '<p style="margin-bottom: 0;">'.$row->filter.'</p>';
+					echo '<p class="lead" style="margin-bottom: 0;">'.$row->title.'</p>';
+					echo '<p class="small">'.$row->filter.'</p>';
 					echo '</form>';
 				}
 				
