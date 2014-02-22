@@ -56,21 +56,23 @@
 				<label for="interested">Find (select multiple using ctrl/cmd)</label><br>
 		                <select id="interested" name="interested[]" multiple style="width: 100%; margin-top: 5px; margin-bottom: 5px; height: 150px" class="form-control">
 		                    <?php foreach(getColNames() as $col): ?>
+					<?php if(col2type($col) == 'Textbox'): continue; endif; ?>
 		                    <option <?php if(array_key_exists('interested', $_POST) && array_search($col, $_POST['interested']) !== FALSE): echo 'selected '; endif;?>value="<?php echo $col; ?>">
-		                        <?php echo $col; ?>
+		                        <?php echo col2name($col); ?>
 		                    </option>
 		                    <?php endforeach; ?>
 		                </select>
 		             </div>
 		             <div class="col-md-8">
                 		<label for="filter">grouped by</label>
-		                <select name="filter" class="form-control" id="filter">
+		                <select name="filter" class="form-control" id="filter" style="width: 100%;">
 		                    <option <?php if(array_key_exists('interested', $_POST) && $_POST['interested'] == 'nofilter'): echo 'selected '; endif; ?>value="nofilter">
 		                        No grouping (all responses)
 		                    </option>
 		                    <?php foreach(getColNames() as $col): ?>
+					<?php if(col2type($col) == 'Textbox'): continue; endif; ?>
 		                    <option <?php if(array_key_exists('filter', $_POST) && $_POST['filter'] == $col): echo 'selected '; endif; ?>value="<?php echo $col; ?>">
-		                        <?php echo $col; ?>
+		                        <?php echo col2name($col); ?>
 		                    </option>
 		                    <?php endforeach; ?>
 		                </select>&nbsp;
@@ -80,10 +82,11 @@
 		                </div>
 				<br><br>
 		                <label for="restriction">Where</label>
-		                <select name="restriction" id="restriction" class="form-control">
+		                <select name="restriction" id="restriction" class="form-control" style="width: 100%;">
 		                    <?php foreach(getColNames() as $col): ?>
+					<?php if(col2type($col) == 'Textbox'): continue; endif; ?>
 		                    <option <?php if(array_key_exists('restriction', $_POST) && $_POST['restriction'] == $col): echo 'selected '; endif; ?> value="<?php echo $col; ?>">
-		                        <?php echo $col; ?>
+		                        <?php echo col2name($col); ?>
 		                    </option>
 		                    <?php endforeach; ?>
 		                </select>&nbsp;
@@ -97,8 +100,7 @@
 			                </option>
 			                <?php endforeach; ?>
 		                </select>&nbsp;
-		                <input type="text" class="form-control" <?php if(array_key_exists('filter', $_POST)): echo 'value="'.$_POST['restriction_comparative'].'" '; endif; ?> name="restriction_comparative" style="width: 
-auto !important">
+		                <input type="text" class="form-control" <?php if(array_key_exists('filter', $_POST)): echo 'value="'.$_POST['restriction_comparative'].'" '; endif; ?> name="restriction_comparative" style="width: auto !important">
 		                <br><br>
 		                <label class="checkbox-inline">
 		                    <input type="checkbox" <?php if(array_key_exists('ignorena', $_POST) && $_POST['ignorena'] == 1): ?>checked <?php endif; ?>value="1" id="ignorena" name="ignorena">
@@ -190,7 +192,7 @@ auto !important">
 	                        </form>
 	                    	<?php endif; ?>
 	                        <?php
-	                        echo '<p class="lead">'.strtoupper($_POST['filter']).': '.strtoupper($group_option).'</p>';
+	                        echo '<p class="lead">'.col2name(strtoupper($_POST['filter'])).': '.strtoupper($group_option).'</p>';
 	                        ?>
 	                        <table class="table table-bordered table-hover table-striped" style="width: 70%;">
 	                            <tr>
@@ -207,7 +209,7 @@ auto !important">
 		                    		// Number of responses to question in this group
 		                    		// Number of responses with that answer in group / number of responses in group
 		                    		// Number of responses with that answer in group / number of responses with that answer
-		                    	    echo '<tr><td>'.$question.'</td><td>'.$field_opt."</td><td>
+		                    	    echo '<tr><td>'.col2name($question).'</td><td>'.$field_opt."</td><td>
 			                    	".$statistics['grouped_question_responses'][$group_option][$field_opt]."</td><td>
 				                    ".round(($statistics['grouped_question_responses'][$group_option][$field_opt]/$statistics['group_options'][$group_option])*100,2)."</td><td>
 					                ".round(($statistics['grouped_question_responses'][$group_option][$field_opt]/$statistics['total_question_responses'][$field_opt])*100,2)."</td></tr>";
@@ -233,7 +235,7 @@ auto !important">
             }
         ?>
         <footer style="border-top: 1px solid #e5e5e5; color: #777; padding: 30px 0; margin-top: 70px;">
-			<p>&copy; Felix Imperial <a href="#head">Top of page</a> - <a href="#" onClick="return open_changelog();">Version 1.4</a></p>
+			<p>&copy; Felix Imperial <a href="#head">Top of page</a> - <a href="#" onClick="return open_changelog();">Version 1.5</a></p>
         </footer>
     </div>
 </body>

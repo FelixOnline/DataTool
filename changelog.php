@@ -35,6 +35,13 @@
 		    <p><b>Felix Surveys Data Tool</b> version 1.4, by Philip Kent. Portions from pChart, released under the terms of the GNU GPL v3.</p>
 		    <p>This software comes with no warranty or guarantee, and is provided to you under the terms of the 3 clause BSD license.</p>
 		    <h3>Changelog</h3>
+                        <b class="text-muted">VERSION 1.5 (22/02/2014)</b>
+                        <ul>
+				<li>Fix date.default_timezone bugs.</li>
+				<li>Display full question titles from map table.</li>
+				<li>Ignore text questions.</li>
+				<li>Don't repeatedly state filters in CSV export where specified.</li>
+                        </ul>
                         <b class="text-muted">VERSION 1.4 (14/12/2013)</b>
                         <ul>
 				<li>Display the name of the field that the results are grouped by in the results title, not the name of one of the values in that field.</li>

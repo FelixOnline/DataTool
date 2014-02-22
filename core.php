@@ -1,5 +1,46 @@
 <?php
 
+function col2name($col) {
+	global $db_table;
+
+	if(strpos($col, ',') !== FALSE) {
+		$cols = explode(',', $col);
+
+		$ret = array();
+		foreach($cols as $col) {
+			$ret[] = col2name(trim($col));
+		}
+
+		return(implode(', ', $ret));
+	}
+
+	$sql = "SELECT `Question` FROM `".$db_table."_map` WHERE `ColId` = '".mysql_real_escape_string($col)."'";
+
+	$res = mysql_query($sql);
+	if ($res == FALSE) {
+		return('Error: '.mysql_error()."\n");
+	}
+
+	$res = mysql_fetch_object($res);
+	if(!is_object($res)) {
+		return $col;
+	}
+	return($res->Question);
+}
+
+function col2type($col) {
+	global $db_table;
+	$sql = "SELECT `Type` FROM `".$db_table."_map` WHERE `ColId` = '".mysql_real_escape_string($col)."'";
+
+	$res = mysql_query($sql);
+	if ($res == FALSE) {
+		return('Error: '.mysql_error()."\n");
+	}
+
+	$res = mysql_fetch_object($res);
+	return($res->Type);
+}
+
 function doExec($passedin) {
 	global $db_table;
 	
@@ -10,6 +51,7 @@ function doExec($passedin) {
 		$find = mysql_real_escape_string($question);
 		$group = mysql_real_escape_string($passedin['filter']);
 		$restrict_field = mysql_real_escape_string($passedin['restriction']);
+		$visible_restrict_field = col2name($restrict_field);
 		$restrict_value = mysql_real_escape_string($passedin['restriction_comparative']);
 		
 		// Apply grouping
@@ -25,31 +67,31 @@ function doExec($passedin) {
 		switch($passedin['restriction_type']) {
 			case 'eq':
 				$sql .= " WHERE `$restrict_field` = '$restrict_value'";
-				$filter_desc = "Where $restrict_field is equal to $restrict_value.";
+				$filter_desc = "Where $visible_restrict_field is equal to $restrict_value.";
 				break;
 			case 'neq':
 				$sql .= " WHERE `$restrict_field` != '$restrict_value'";
-				$filter_desc = "Where $restrict_field is not equal to $restrict_value.";
+				$filter_desc = "Where $visible_restrict_field is not equal to $restrict_value.";
 				break;
 			case 'lt':
 				$sql .= " WHERE `$restrict_field` < '$restrict_value'";
-				$filter_desc = "Where $restrict_field is less than $restrict_value.";
+				$filter_desc = "Where $visible_restrict_field is less than $restrict_value.";
 				break;
 			case 'gt':
 				$sql .= " WHERE `$restrict_field` > '$restrict_value'";
-				$filter_desc = "Where $restrict_field is greater than $restrict_value.";
+				$filter_desc = "Where $visible_restrict_field is greater than $restrict_value.";
 				break;
 			case 'lte':
 				$sql .= " WHERE `$restrict_field` <= '$restrict_value'";
-				$filter_desc = "Where $restrict_field is less than or equal to $restrict_value.";
+				$filter_desc = "Where $visible_restrict_field is less than or equal to $restrict_value.";
 				break;
 			case 'gte':
 				$sql .= " WHERE `$restrict_field` >= '$restrict_value'";
-				$filter_desc = "Where $restrict_field is greater than or equal to $restrict_value.";
+				$filter_desc = "Where $visible_restrict_field is greater than or equal to $restrict_value.";
 				break;
 			case 'like':
 				$sql .= " WHERE `$restrict_field` LIKE '%$restrict_value%'";
-				$filter_desc = "Where $restrict_field contains $restrict_value.";
+				$filter_desc = "Where $visible_restrict_field contains $restrict_value.";
 				break;
 		}
 		
@@ -199,9 +241,9 @@ function doExec($passedin) {
 	// Record what the query was
 	$find = implode(', ', $passedin['interested']);
 	if($group != 'nofilter') {
-		$query = $find.': grouped by '.$group;
+		$query = col2name($find).': grouped by '.col2name($group);
 	} else {
-		$query = $find.': all responses';
+		$query = col2name($find).': all responses';
 	}
 	
 	$total_groups = array();
@@ -223,7 +265,7 @@ function doExec($passedin) {
 	if(!array_key_exists('dontlog', $passedin) || $passedin['dontlog'] != '1') {
 		$store = serialize($passedin);
 		
-		$sql = "INSERT INTO `".$db_table."_history` VALUES(NULL, UNIX_TIMESTAMP(), '".mysql_real_escape_string($query)."', '".mysql_real_escape_string($filter_desc)."', '".mysql_real_escape_string($store)."')";
+		$sql = "INSERT INTO `".$db_table."_history` VALUES(NULL, UNIX_TIMESTAMP(), '".mysql_real_escape_string($query)."', '".mysql_real_escape_string($filter_desc)."', '".mysql_real_escape_string($store)."', '".mysql_real_escape_string($_SERVER['PHP_AUTH_USER'])."')";
 		
 		$res2 = mysql_query($sql);
 		if ($res2 == FALSE) {

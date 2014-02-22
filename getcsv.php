@@ -17,12 +17,13 @@ if(array_key_exists('interested', $_POST)) {
         header('Content-Disposition: attachment; filename="'.str_replace(' ', '_', str_replace(',', '', $data['query'])).'.csv"');
 
         fputcsv($fp, array($data['query'], '', '', '', ''));
-        
-        foreach($data['groups'] as $group_option => $num_in_group) {
+
             if($data['filter'] != '') {
                 fputcsv($fp, array('', '', '', '', ''));
                 fputcsv($fp, array('Filter applied: '.$data['filter'], '', '', '', ''));
             }
+
+        foreach($data['groups'] as $group_option => $num_in_group) {
 			fputcsv($fp, array('', '', '', '', ''));
             fputcsv($fp, array('Group:', $group_option, '', ''));
             fputcsv($fp, array('Question', 'Response', 'Responses in group', 'Percentage of group responses', 'Percentage of all responses'));
@@ -37,7 +38,7 @@ if(array_key_exists('interested', $_POST)) {
                     // Number of responses to question in this group
                     // Number of responses with that answer in group / number of responses in group
                     // Number of responses with that answer in group / number of responses with that answer
-                    fputcsv($fp,array($question,
+                    fputcsv($fp,array(col2name($question),
                     $field_opt,
                     $statistics['grouped_question_responses'][$group_option][$field_opt],
                     round(($statistics['grouped_question_responses'][$group_option][$field_opt]/$statistics['group_options'][$group_option])*100,2),

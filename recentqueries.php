@@ -1,3 +1,4 @@
+<?php date_default_timezone_set('Europe/London'); ?>
 <?php require('db.php'); ?>
 <?php require('core.php'); ?>
 
@@ -45,7 +46,7 @@
 				while($row = mysql_fetch_object($res)) {
 					$form = unserialize($row->query);
 					echo '<form action="index.php" method="POST" target="dt_form_'.sha1($felix_survey_name).'">';
-					echo '<b class="text-muted">'.strtoupper(date('l jS F Y H:i', $row->date)).'</b>';
+					echo '<b class="text-muted">'.strtoupper(date('l jS F Y H:i', $row->date)).' ('.strtoupper($row->user).')</b>';
 					foreach($form as $key => $value) {
 						if(is_array($value)) {
 							foreach($value as $value2) {
